@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <!-- Informasi dasar halaman -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SIGMA – Sistem Informasi Geografis Masjid Kota Bandar Lampung</title>
+
+  <!-- Leaflet CSS: library peta interaktif -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <!-- Font Icons dari Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- File CSS kita sendiri -->
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<script src="js/script.js"></script>
+  <script src="js/tour.js"></script>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-logo">
+        <i class="fas fa-mosque"></i>
+      </div>
+      <div class="navbar-title">
+        <span class="brand-sigma">SIGMA</span>
+        <span class="brand-sub">Sistem Informasi Geografis Masjid</span>
+      </div>
+    </div>
+    <div class="navbar-menu">
+      <a href="#" class="nav-link active" onclick="showSection('beranda')">
+        <i class="fas fa-home"></i> Beranda
+      </a>
+      <a href="#" class="nav-link" onclick="showSection('peta')">
+        <i class="fas fa-map"></i> Peta
+      </a>
+      <a href="#" class="nav-link" onclick="showSection('daftar')">
+        <i class="fas fa-list"></i> Data Masjid
+      </a>
+      <a href="#" class="nav-link" onclick="showSection('profil')">
+        <i class="fas fa-user"></i> Profil
+      </a>
+    </div>
+    <div class="navbar-toggle" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </div>
+  </nav>
+
+  <!-- ===== KONTEN UTAMA ===== -->
+  <main class="main-content">
+
+    <!-- SECTION 1: BERANDA / LANDING PAGE -->
+    <section id="section-beranda" class="section active">
+      <div class="landing-container">
+        <div class="landing-left">
+          <div class="landing-badge">
+            <i class="fas fa-map-marker-alt"></i> Kota Bandar Lampung
+          </div>
+          <h1 class="landing-title">
+            <span class="title-sigma">SIGMA</span>
+          </h1>
+          <p class="landing-subtitle">
+            Sistem Informasi Geografis Masjid<br>Kota Bandar Lampung
+          </p>
+          <p class="landing-desc">
+            Platform pemetaan digital yang menampilkan persebaran lokasi masjid
+            di Kota Bandar Lampung secara interaktif, akurat, dan mudah diakses.
+          </p>
+          <div class="landing-buttons">
+           <!-- Jadwal Sholat -->
+<div class="jadwal-sholat">
+  <div class="jadwal-header">
+    <i class="fas fa-clock"></i>
+    <span id="jadwal-tanggal">Memuat...</span>
+  </div>
+  <div class="jadwal-grid" id="jadwal-grid">
+    <div class="jadwal-item"><span class="jadwal-nama">Subuh</span><span class="jadwal-waktu" id="j-subuh">--:--</span></div>
+    <div class="jadwal-item"><span class="jadwal-nama">Dzuhur</span><span class="jadwal-waktu" id="j-dzuhur">--:--</span></div>
+    <div class="jadwal-item"><span class="jadwal-nama">Ashar</span><span class="jadwal-waktu" id="j-ashar">--:--</span></div>
+    <div class="jadwal-item"><span class="jadwal-nama">Maghrib</span><span class="jadwal-waktu" id="j-maghrib">--:--</span></div>
+    <div class="jadwal-item"><span class="jadwal-nama">Isya</span><span class="jadwal-waktu" id="j-isya">--:--</span></div>
+  </div>
+</div>
+            <button class="btn-primary" onclick="showSection('peta')">
+              <i class="fas fa-map"></i> Masuk ke Peta
+            </button>
+            <button class="btn-secondary" onclick="showSection('daftar')">
+              <i class="fas fa-list"></i> Lihat Data Masjid
+            </button>
+          </div>
+          <!-- Kartu statistik kecil -->
+          <div class="landing-stats">
+            <div class="stat-mini">
+              <span class="stat-mini-num" id="total-masjid">25</span>
+              <span class="stat-mini-label">Total Masjid</span>
+            </div>
+            <div class="stat-mini">
+              <span class="stat-mini-num">14</span>
+              <span class="stat-mini-label">Kecamatan</span>
+            </div>
+            <div class="stat-mini">
+              <span class="stat-mini-num">5</span>
+              <span class="stat-mini-label">Kategori</span>
+            </div>
+          </div>
+        </div>
+        <div class="landing-right">
+          <div class="mascot-container">
+            <div class="mascot-pin">
+              <i class="fas fa-mosque"></i>
+            </div>
+            <div class="mascot-ring ring-1"></div>
+            <div class="mascot-ring ring-2"></div>
+            <div class="mascot-ring ring-3"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: PETA -->
+    <section id="section-peta" class="section">
+      <div class="peta-container">
+
+        <!-- Sidebar Filter -->
+        <div class="sidebar" id="sidebar">
+          <div class="sidebar-header">
+            <h3><i class="fas fa-filter"></i> Filter & Pencarian</h3>
+          </div>
+
+          <!-- Pencarian -->
+          <div class="sidebar-section">
+            <label class="sidebar-label">Cari Masjid</label>
+            <div class="search-box">
+              <i class="fas fa-search"></i>
+              <input type="text" id="search-input" placeholder="Nama masjid..."
+                     oninput="filterMarkers()"/>
+            </div>
+          </div>
+
+          <!-- Filter Kategori -->
+          <div class="sidebar-section">
+            <label class="sidebar-label">Filter Kategori</label>
+            <div class="filter-options" id="filter-kategori">
+              <label class="filter-item">
+                <input type="checkbox" value="semua" checked onchange="filterMarkers()"/>
+                <span class="filter-dot" style="background:#374151"></span> Semua
+              </label>
+              <label class="filter-item">
+                <input type="checkbox" value="MASJID RAYA" onchange="filterMarkers()"/>
+                <span class="filter-dot" style="background:#1a3a6b"></span> Masjid Raya
+              </label>
+              <label class="filter-item">
+                <input type="checkbox" value="MASJID AGUNG" onchange="filterMarkers()"/>
+                <span class="filter-dot" style="background:#7b2d8b"></span> Masjid Agung
+              </label>
+              <label class="filter-item">
+                <input type="checkbox" value="MASJID BESAR" onchange="filterMarkers()"/>
+                <span class="filter-dot" style="background:#e67e22"></span> Masjid Besar
+              </label>
+              <label class="filter-item">
+                <input type="checkbox" value="MASJID JAMI" onchange="filterMarkers()"/>
+                <span class="filter-dot" style="background:#27ae60"></span> Masjid Jami
+              </label>
+              <label class="filter-item">
+                <input type="checkbox" value="MASJID DI TEMPAT PUBLIK" onchange="filterMarkers()"/>
+                <span class="filter-dot" style="background:#e74c3c"></span> Masjid Publik
+              </label>
+            </div>
+          </div>
+
+          <!-- Filter Kecamatan -->
+          <div class="sidebar-section">
+            <label class="sidebar-label">Filter Kecamatan</label>
+            <select id="filter-kecamatan" onchange="filterMarkers()" class="select-input">
+              <option value="semua">Semua Kecamatan</option>
+            </select>
+          </div>
+
+          <!-- Masjid Terdekat -->
+          <div class="sidebar-section">
+            <label class="sidebar-label">Masjid Terdekat</label>
+            <button class="btn-locate" onclick="findNearest()">
+              <i class="fas fa-location-arrow"></i> Temukan Masjid Terdekat
+            </button>
+          </div>
+
+          <!-- Hasil pencarian -->
+          <div class="sidebar-section">
+            <label class="sidebar-label">Hasil: <span id="hasil-count">25</span> masjid</label>
+            <div class="hasil-list" id="hasil-list"></div>
+          </div>
+        </div>
+
+        <!-- Peta Leaflet -->
+        <div id="map"></div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 3: DAFTAR MASJID -->
+    <section id="section-daftar" class="section">
+      <div class="daftar-container">
+        <div class="daftar-header">
+          <h2><i class="fas fa-mosque"></i> Data Masjid Kota Bandar Lampung</h2>
+          <div class="daftar-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="daftar-search" placeholder="Cari nama masjid..."
+                   oninput="filterDaftar()"/>
+          </div>
+        </div>
+        <div class="daftar-filter">
+          <select id="daftar-filter-jenis" onchange="filterDaftar()" class="select-input">
+            <option value="semua">Semua Kategori</option>
+            <option value="MASJID RAYA">Masjid Raya</option>
+            <option value="MASJID AGUNG">Masjid Agung</option>
+            <option value="MASJID BESAR">Masjid Besar</option>
+            <option value="MASJID JAMI">Masjid Jami</option>
+            <option value="MASJID DI TEMPAT PUBLIK">Masjid di Tempat Publik</option>
+          </select>
+          <select id="daftar-filter-kecamatan" onchange="filterDaftar()" class="select-input">
+            <option value="semua">Semua Kecamatan</option>
+          </select>
+        </div>
+        <div class="table-wrapper">
+          <table class="daftar-table">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama Masjid</th>
+                <th>Jenis</th>
+                <th>Kecamatan</th>
+                <th>Alamat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="daftar-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: PROFIL -->
+    <section id="section-profil" class="section">
+      <div class="profil-container">
+        <div class="profil-card">
+          <div class="profil-avatar">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+          <h2 class="profil-nama">Aisyah Ananda Putri</h2>
+          <p class="profil-npm">NPM: 2313034011</p>
+          <div class="profil-info">
+            <div class="profil-item">
+              <i class="fas fa-graduation-cap"></i>
+              <span>Pendidikan Geografi – FKIP Universitas Lampung</span>
+            </div>
+            <div class="profil-item">
+              <i class="fas fa-envelope"></i>
+              <span>email@student.unila.ac.id</span>
+            </div>
+            <div class="profil-item">
+              <i class="fab fa-github"></i>
+              <span>github.com/username</span>
+            </div>
+            <div class="profil-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Bandar Lampung, Indonesia</span>
+            </div>
+          </div>
+          <div class="profil-desc">
+            <p>
+              WebGIS SIGMA dikembangkan sebagai bagian dari penelitian skripsi
+              mengenai persebaran lokasi masjid di Kota Bandar Lampung.
+              Dibangun menggunakan Leaflet.js, HTML, CSS, dan JavaScript.
+            </p>
+          </div>
+        </div>
+        <div class="profil-tech">
+          <h3>Teknologi yang Digunakan</h3>
+          <div class="tech-grid">
+            <div class="tech-item"><i class="fab fa-html5"></i><span>HTML5</span></div>
+            <div class="tech-item"><i class="fab fa-css3-alt"></i><span>CSS3</span></div>
+            <div class="tech-item"><i class="fab fa-js"></i><span>JavaScript</span></div>
+            <div class="tech-item"><i class="fas fa-map"></i><span>Leaflet.js</span></div>
+            <div class="tech-item"><i class="fab fa-github"></i><span>GitHub Pages</span></div>
+            <div class="tech-item"><i class="fas fa-database"></i><span>GeoJSON</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- File JS kita sendiri -->
+  <script src="js/script.js"></script>
+
+</body>
+</html>
